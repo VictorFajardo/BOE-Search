@@ -1,0 +1,66 @@
+/* app css stylesheet */
+body {
+  padding: 0 20px;
+}
+
+.menu {
+  list-style: none;
+  border-bottom: 0.1em solid black;
+  margin-bottom: 2em;
+  padding: 0 0 0.5em;
+}
+
+.menu:before {
+  content: "[";
+}
+
+.menu:after {
+  content: "]";
+}
+
+.menu > li {
+  display: inline;
+}
+
+.menu > li + li:before {
+  content: "|";
+  padding-right: 0.3em;
+}
+
+
+/* Search Component  */
+
+#search-component input[type="search"] {
+  width: 242px;
+  padding: 4px;
+}
+
+#search-component ul {
+  display: inline-block;
+  width: 254px;
+  background-color: #eee;
+  margin: 0 1px;
+  padding: 0;
+  cursor: default;
+}
+
+#search-component ul li {
+  list-style: none;
+  padding: 0 4px;
+  line-height: 30px;
+}
+
+#search-component ul li:hover {
+  background-color: #ccc;
+}
+
+/* Results Components */
+
+#results-component ul {
+  padding: 0;
+}
+
+#results-component ul li {
+  list-style: none;
+  padding: 0;
+}
