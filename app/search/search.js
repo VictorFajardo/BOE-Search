@@ -11,11 +11,13 @@ angular.module('myApp.search', ['ngRoute'])
 
 .controller('SearchCtrl', ['$scope', '$location', function($scope, $location) {
 
+  var prevQuery = [];
+
   // Detecting activity on INPUT
   $("#mySearch").on("focusin keyup paste", function(){
-    var query = $(this).val();
+    var query = $(this).val().toLowerCase();
     if(query.length>2) {
-      compare(query.toLowerCase());
+      queryToArray(query);
     } else {
       $("#links li").empty();
     }
@@ -24,28 +26,52 @@ angular.module('myApp.search', ['ngRoute'])
   // Detecting 'focusout' on INPUT
   $("#mySearch").on("focusout", function(){
     setTimeout(function() {
-      console.log("links hide");
       $("#links li").empty();
+      prevQuery = [];
     }, 100);
   });
 
+  // queryToArray Function
+  var queryToArray = function(query) {
+    var i;
+    var words = [];
+    query = query.split(/[^a-z]+/);
+    for(i in query) {
+      if(query[i].length>=3) {
+        words.push(query[i]);
+      }
+    }
+    if(words.length>0 && words.toString()!==prevQuery.toString()) {
+      prevQuery = words;
+      console.info('searching terms: '+words);
+      compare(words);
+    }
+  }
+
   // compare Function
-  var compare = function(query) {
+  var compare = function(wordsArray) {
     console.log('comparing...');
-    var x;
+    var i;
+    var j;
     var titlesArray = [];
     var urlsArray = [];
-    for(x in data) {
-      var title = data[x].title.toLowerCase();
-      if(title.includes(query)) {
-        titlesArray.push(data[x].title);
-        urlsArray.push(data[x].url);
-        if(titlesArray.length>4) {
+    var orderArray = [];
+    for(i in data) {
+      var title = data[i].title.toLowerCase();
+      for(j in wordsArray) {
+      var word = wordsArray[j];
+        if(title.includes(word)) {
+          titlesArray.push(data[i].title);
+          urlsArray.push(data[i].url);
+          orderArray.push(data[i].id);
           break;
         }
       }
+      if(titlesArray.length>4) {
+        break;
+      }
     }
-    console.log(titlesArray);
+    // console.log(titlesArray, orderArray);
     if(titlesArray.length>0) {
       printLinks(titlesArray, urlsArray);
     } else {
@@ -60,6 +86,7 @@ angular.module('myApp.search', ['ngRoute'])
     var y;
     for(y in titles) {
       $("#links #li-pos"+y).append('<a href="'+urls[y]+'" target="_blank">'+titles[y]+'</a>');
+      // console.log(titles[y]);
     }
   }
 
@@ -67,7 +94,7 @@ angular.module('myApp.search', ['ngRoute'])
   $scope.search = function() {
     if($("#mySearch").val().length>2) {
       console.log('searching...');
-      $location.path('results/'+$("#mySearch").val());
+      $location.path('/results/'+$("#mySearch").val());
     }
   }
   
@@ -118,5 +145,7 @@ angular.module('myApp.search', ['ngRoute'])
       url: "https://www.lungsandyou.com/facts/ipf-progression"
     }
   ];
+
+  $scope.data = data;
 
 }]);
